@@ -1,21 +1,27 @@
-# api-stress-kit 🚀
+# 🚀 api-stress-kit
 
-A minimal, production-ready starter to **build**, **benchmark**, and **stress‑test** REST APIs using **Go**, **Gin**, and popular load tools (**Vegeta** / **k6**).
+**api-stress-kit** is a minimal, production-ready starter to **build**, **benchmark**, and **stress-test** REST APIs using **Go**, **Gin**, and popular load-testing tools — **Vegeta** and **k6**.
 
-## Features
-- ⚡ Fast HTTP API with Gin (`/ping`, `/health`, `/users`)
-- 🧪 Stress testing via **Vegeta** and **k6**
-- 🐳 Dockerfile + docker-compose for reproducible runs
+---
+
+## ✨ Features
+- ⚡ Fast HTTP API built with **Gin**
+- 🧪 Stress testing using **Vegeta** & **k6**
+- 🐳 Dockerfile + Compose for reproducible environments
 - ✅ Basic unit test for `/ping`
+- 🧩 Ready for profiling with `pprof`
 
-## Quick Start
+---
+
+## ⚙️ Quick Start
+
+### Run Locally
 ```bash
-# Run locally
 go mod tidy
 go run main.go
 ```
 
-## Install Load Testing Tools
+### Install Load Testing Tools
 ```bash
 # Vegeta
 go install github.com/tsenart/vegeta/v12@latest
@@ -26,30 +32,46 @@ brew install vegeta
 brew install k6
 ```
 
-### Vegeta (CLI)
+---
+
+## 🔥 Stress Testing Examples
+
+### Vegeta
 ```bash
 echo "GET http://localhost:8080/ping" | vegeta attack -duration=15s -rate=200 | vegeta report
 ```
 
-### k6 (CLI)
+### k6
 ```bash
 k6 run tests/stress/k6_test.js
 ```
 
-## Docker
+---
+
+## 🐳 Run with Docker
 ```bash
 docker-compose up --build
-# Server on http://localhost:8080
+# Server available at: http://localhost:8080
 ```
 
+---
 
-## Endpoints
-- `GET /ping` → `{ message: "pong", latency_ms: <int> }`
-- `GET /health` → `{ status: "ok" }`
-- `GET /users` → JSON list of demo users
+## 🧠 Endpoints
+| Method | Path | Description | Example Response |
+|--------|------|--------------|------------------|
+| `GET` | `/ping` | Health check with latency info | `{ "message": "pong", "latency_ms": 1 }` |
+| `GET` | `/health` | Simple status check | `{ "status": "ok" }` |
+| `GET` | `/users` | List of demo users | `[{"id":1,"name":"Alice"},{"id":2,"name":"Bob"}]` |
 
-## Output
-```
+---
+
+## 📊 Output
+
+<details>
+<summary><b>▶️ Click to expand full test results (k6 + Vegeta)</b></summary>
+
+### 🧪 k6 Test Output
+```bash
 % k6 run tests/stress/k6_test.js
 
          /\      Grafana   /‾‾/  
@@ -66,24 +88,23 @@ docker-compose up --build
               * default: 20 looping VUs for 20s (gracefulStop: 30s)
 
 
-
   █ TOTAL RESULTS 
 
-    checks_total.......: 800     39.425515/s
+    checks_total.......: 800     39.43/s
     checks_succeeded...: 100.00% 800 out of 800
     checks_failed......: 0.00%   0 out of 800
 
     ✓ status was 200
 
     HTTP
-    http_req_duration..............: avg=5.71ms   min=710µs    med=5.67ms   max=15.08ms  p(90)=9.34ms   p(95)=12.44ms 
-      { expected_response:true }...: avg=5.71ms   min=710µs    med=5.67ms   max=15.08ms  p(90)=9.34ms   p(95)=12.44ms 
+    http_req_duration..............: avg=5.71ms   min=710µs    med=5.67ms   max=15.08ms  
+      { expected_response:true }...: avg=5.71ms   min=710µs    med=5.67ms   max=15.08ms  
     http_req_failed................: 0.00%  0 out of 800
-    http_reqs......................: 800    39.425515/s
+    http_reqs......................: 800    39.43/s
 
     EXECUTION
-    iteration_duration.............: avg=507.21ms min=500.91ms med=507.06ms max=519.43ms p(90)=512.86ms p(95)=515.16ms
-    iterations.....................: 800    39.425515/s
+    iteration_duration.............: avg=507.21ms min=500.91ms med=507.06ms max=519.43ms
+    iterations.....................: 800    39.43/s
     vus............................: 20     min=20       max=20
     vus_max........................: 20     min=20       max=20
 
@@ -91,15 +112,16 @@ docker-compose up --build
     data_received..................: 125 kB 6.2 kB/s
     data_sent......................: 59 kB  2.9 kB/s
 
-
-
-
 running (20.3s), 00/20 VUs, 800 complete and 0 interrupted iterations
 default ✓ [======================================] 20 VUs  20s
 ```
 
-```
+---
+
+### ⚡ Vegeta Test Output
+```bash
 % echo "GET http://localhost:8080/users" | vegeta attack -duration=15s -rate=200 | vegeta report
+
 Requests      [total, rate, throughput]         3000, 200.07, 200.05
 Duration      [total, attack, wait]             14.996s, 14.995s, 1.339ms
 Latencies     [min, mean, 50, 90, 95, 99, max]  428.25µs, 1.749ms, 1.252ms, 3.208ms, 4.227ms, 8.217ms, 33.845ms
@@ -109,44 +131,77 @@ Success       [ratio]                           100.00%
 Status Codes  [code:count]                      200:3000  
 Error Set:
 ```
+</details>
 
-## Performance Comparison
+---
 
+## ⚙️ Performance Comparison
+
+Command used:
 ```bash
 echo "GET http://localhost:8080/users" | vegeta attack -duration=10s -rate=2000 | vegeta report
 ```
 
-### => Native Execution
+---
+
+### 🖥️ Native Execution (Direct Go Run)
 ```bash
 go run main.go
 ```
-- 0 Rquests:<br /><img src="docs/os-0.png" />
-  
-- 10s @ 2000 RPS:<br />
-<img src="docs/os-cpu.png" /><br/>
-<img src="docs/os-stress.png" />
 
+#### 🕒 Idle (0 Requests)
+<p align="center">
+  <img src="docs/os-0.png" width="70%" alt="Native - Idle CPU Graph" />
+</p>
 
-### => Inside Docker:
+#### 🚀 Load Test (10s @ 2000 RPS)
+<p align="center">
+  <img src="docs/os-cpu.png" width="70%" alt="Native - CPU Load" />
+  <br/>
+  <img src="docs/os-stress.png" width="70%" alt="Native - Stress Graph" />
+</p>
+
+---
+
+### 🐳 Inside Docker (Containerized Execution)
 ```bash
 docker-compose up --build
 ```
-- 0 Requests:<br />
-<img src="docs/docker-0.png" />
-  
-- 10s @ 2000 RPS:<br />
-<img src="docs/docker-cpu.png" /><br/>
-<img src="docs/docker-stress.png" />
 
+#### 🕒 Idle (0 Requests)
+<p align="center">
+  <img src="docs/docker-0.png" width="70%" alt="Docker - Idle CPU Graph" />
+</p>
 
-## License
-MIT
+#### 🚀 Load Test (10s @ 2000 RPS)
+<p align="center">
+  <img src="docs/docker-cpu.png" width="70%" alt="Docker - CPU Load" />
+  <br/>
+  <img src="docs/docker-stress.png" width="70%" alt="Docker - Stress Graph" />
+</p>
 
+---
 
-## Maintainer
+### 📊 Summary
+| Environment | Command | Overhead Observed | Network Mode |
+|--------------|----------|-------------------|---------------|
+| 🖥️ Native | `go run main.go` | Minimal CPU overhead | Direct host |
+| 🐳 Docker | `docker-compose up --build` | Slightly higher baseline CPU (due to VM bridge) | Docker bridge |
 
+> 🧠 *Observation:* Running under Docker introduces an extra CPU overhead layer caused by virtualization, filesystem overlay, and bridged networking — especially visible during high RPS bursts.
+
+---
+
+## 🧾 License
+**MIT License**
+
+---
+
+## 👤 Maintainer
 **Khaled Alam**  
-Full-Stack Software Engineer<br />
-[Portfolio](https://khaledalam.net)  
-[khaledalam.net@gmail.com](mailto:khaledalam.net@gmail.com)  
-LinkedIn: [linkedin.com/in/khaledalam](https://linkedin.com/in/khaledalam)
+Full-Stack Software Engineer • Laravel · React · SaaS · PropTech  
+
+🌐 [Portfolio](https://khaledalam.net)  
+✉️ [khaledalam.net@gmail.com](mailto:khaledalam.net@gmail.com)  
+💼 [LinkedIn](https://linkedin.com/in/khaledalam)
+
