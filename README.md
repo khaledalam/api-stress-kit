@@ -13,10 +13,17 @@ A minimal, production-ready starter to **build**, **benchmark**, and **stress‑
 # Run locally
 go mod tidy
 go run main.go
+```
 
+## Install Load Testing Tools
+```bash
+# Vegeta
 go install github.com/tsenart/vegeta/v12@latest
+# or using Homebrew
 brew install vegeta
 
+# k6
+brew install k6
 ```
 
 ### Vegeta (CLI)
@@ -103,5 +110,43 @@ Status Codes  [code:count]                      200:3000
 Error Set:
 ```
 
+## Performance Comparison
+
+```bash
+echo "GET http://localhost:8080/users" | vegeta attack -duration=10s -rate=2000 | vegeta report
+```
+
+### => Native Execution
+```bash
+go run main.go
+```
+- 0 Rquests:<br /><img src="docs/os-0.png" />
+  
+- 10s @ 2000 RPS:<br />
+<img src="docs/os-cpu.png" /><br/>
+<img src="docs/os-stress.png" />
+
+
+### => Inside Docker:
+```bash
+docker-compose up --build
+```
+- 0 Requests:<br />
+<img src="docs/docker-0.png" />
+  
+- 10s @ 2000 RPS:<br />
+<img src="docs/docker-cpu.png" /><br/>
+<img src="docs/docker-stress.png" />
+
+
 ## License
 MIT
+
+
+## Maintainer
+
+**Khaled Alam**  
+Full-Stack Software Engineer<br />
+[Portfolio](https://khaledalam.net)  
+[khaledalam.net@gmail.com](mailto:khaledalam.net@gmail.com)  
+LinkedIn: [linkedin.com/in/khaledalam](https://linkedin.com/in/khaledalam)
