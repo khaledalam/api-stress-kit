@@ -59,7 +59,7 @@ docker-compose up --build
 ## 🧠 Endpoints
 | Method | Path | Description | Example Response |
 |--------|------|--------------|------------------|
-| `GET` | `/ping` | Health check with latency info | `{ "message": "pong", "latency_ms": 1 }` |
+| `GET` | `/ping` | Health check with latency info | `{ "message": "pong", "latency_ms": <int> }` |
 | `GET` | `/health` | Simple status check | `{ "status": "ok" }` |
 | `GET` | `/users` | List of demo users | `[{"id":1,"name":"Alice"},{"id":2,"name":"Bob"}]` |
 
@@ -199,7 +199,7 @@ docker-compose up --build
 
 ## 👤 Maintainer
 **Khaled Alam**  
-Full-Stack Software Engineer • Laravel · React · SaaS · PropTech  
+Full-Stack Software Engineer 
 
 🌐 [Portfolio](https://khaledalam.net)  
 ✉️ [khaledalam.net@gmail.com](mailto:khaledalam.net@gmail.com)  
