@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	_ "net/http/pprof"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -10,6 +11,9 @@ import (
 )
 
 func main() {
+
+	go func() { http.ListenAndServe("0.0.0.0:6060", nil) }() // pprof
+
 	r := gin.Default()
 
 	// Basic ping endpoint with latency measurement
